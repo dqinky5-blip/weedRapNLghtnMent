@@ -21,7 +21,6 @@ body{
   background:linear-gradient(135deg,#ffffff,#dcdcdc,#f2f2f2);
 }
 
-/* MAIN CARD */
 .container{
   width:100%;
   max-width:420px;
@@ -34,7 +33,6 @@ body{
   position:relative;
 }
 
-/* PROFILE IMAGE */
 .profile-img{
   position:absolute;
   top:-90px;
@@ -47,7 +45,6 @@ body{
   border:5px solid white;
 }
 
-/* TEXT */
 h1{
   margin-top:120px;
   font-size:24px;
@@ -65,7 +62,6 @@ p{
   text-decoration:underline;
 }
 
-/* BUTTONS */
 .primary-btn, .secondary-btn{
   display:block;
   width:100%;
@@ -87,7 +83,6 @@ p{
   color:white;
 }
 
-/* COUNTDOWN */
 .countdown{
   position:fixed;
   top:0;
@@ -104,7 +99,6 @@ p{
   display:none;
 }
 
-/* EMAIL POPUP */
 .email-popup{
   position:fixed;
   top:0;
@@ -127,15 +121,6 @@ p{
   animation:fadeIn 0.4s ease;
 }
 
-.email-box h2{
-  margin-bottom:10px;
-}
-
-.email-box p{
-  font-size:14px;
-  color:#555;
-}
-
 .email-box input{
   width:100%;
   padding:12px;
@@ -151,7 +136,6 @@ p{
   border-radius:10px;
   background:black;
   color:white;
-  cursor:pointer;
 }
 
 .skip{
@@ -171,25 +155,22 @@ p{
 
 <body>
 
-<!-- EMAIL POPUP -->
 <div class="email-popup" id="emailPopup">
   <div class="email-box">
     <h2>Join the Movement</h2>
-    <p>Stay updated with new drops, live shows & exclusive content.</p>
+    <p>Stay updated with new drops & live shows.</p>
 
     <form id="emailForm">
       <input type="email" id="emailInput" required placeholder="Enter your email">
-      <button type="submit">Join Newsletter</button>
+      <button type="submit">Join</button>
     </form>
 
     <span class="skip" id="skipPopup">No thanks</span>
   </div>
 </div>
 
-<!-- COUNTDOWN -->
 <div class="countdown" id="countdown">30</div>
 
-<!-- MAIN CARD -->
 <div class="container">
 
   <img class="profile-img"
@@ -203,17 +184,16 @@ p{
     Cash App
   </a>
 
-  <a href="https://www.instagram.com/weedrapNlghtnMent/" target="_blank" class="secondary-btn">
+  <a href="https://www.instagram.com/weedrapnlghtnment/" target="_blank" class="secondary-btn">
     Instagram
   </a>
 
 </div>
 
 <script>
-// 📍 LOCATION LINK
-const locationLink = "https://maps.google.com/?q=YOUR+LOCATION";
+// 🔥 YOUR REAL LOCATION LINK
+const locationLink = "https://maps.app.goo.gl/bXSerAQgZVYDSPj68";
 
-// 📅 SCHEDULE
 const schedule = {
   0: null,
   1: ["18:00","22:00"],
@@ -227,7 +207,6 @@ const schedule = {
 const text = document.getElementById("scheduleText");
 const countdownEl = document.getElementById("countdown");
 
-// 🕒 FORMAT TIME (12hr)
 function formatTime(time){
   let [h,m] = time.split(":");
   h = parseInt(h);
@@ -236,11 +215,9 @@ function formatTime(time){
   return `${h}:${m} ${ampm}`;
 }
 
-// 🔴 LIVE CHECK
 function checkLive(){
   const now = new Date();
-  const day = now.getDay();
-  const today = schedule[day];
+  const today = schedule[now.getDay()];
 
   if(!today){
     text.innerText = "Closed Today";
@@ -248,17 +225,14 @@ function checkLive(){
   }
 
   const [start,end] = today;
-
   const current = now.getHours()*60 + now.getMinutes();
-  const startMin = parseInt(start.split(":")[0])*60 + parseInt(start.split(":")[1]);
-  const endMin = parseInt(end.split(":")[0])*60 + parseInt(end.split(":")[1]);
+  const startMin = parseInt(start)*60 + parseInt(start.split(":")[1]);
+  const endMin = parseInt(end)*60 + parseInt(end.split(":")[1]);
 
   if(current >= startMin && current <= endMin){
     text.innerText = "🔴 LIVE NOW – Tap for location";
     text.classList.add("live");
-
-    text.onclick = () => startCountdown();
-
+    text.onclick = startCountdown;
   } else {
     text.classList.remove("live");
     text.innerText = `Next Show: ${formatTime(start)} - ${formatTime(end)}`;
@@ -266,10 +240,10 @@ function checkLive(){
   }
 }
 
-// ⏳ COUNTDOWN
 function startCountdown(){
   let count = 30;
   countdownEl.style.display = "flex";
+  countdownEl.innerText = count;
 
   const interval = setInterval(()=>{
     count--;
@@ -283,36 +257,32 @@ function startCountdown(){
   },1000);
 }
 
-// 📩 EMAIL POPUP LOGIC
+// POPUP CONTROL
 const popup = document.getElementById("emailPopup");
-const skip = document.getElementById("skipPopup");
-const form = document.getElementById("emailForm");
 
-if(localStorage.getItem("newsletterClosed")){
-  popup.style.display = "none";
-}
+popup.style.display = "none";
 
-skip.onclick = () => {
+setTimeout(()=>{
+  if(!localStorage.getItem("closed")){
+    popup.style.display = "flex";
+  }
+},2000);
+
+document.getElementById("skipPopup").onclick = ()=>{
   popup.style.display = "none";
-  localStorage.setItem("newsletterClosed", "true");
+  localStorage.setItem("closed","true");
 };
 
-form.onsubmit = (e) => {
+document.getElementById("emailForm").onsubmit = (e)=>{
   e.preventDefault();
-
-  const email = document.getElementById("emailInput").value;
-
-  console.log("Collected:", email);
-
-  alert("You're in. Stay tuned.");
-
+  alert("You're in.");
   popup.style.display = "none";
-  localStorage.setItem("newsletterClosed", "true");
+  localStorage.setItem("closed","true");
 };
 
 // INIT
-setInterval(checkLive,1000);
 checkLive();
+setInterval(checkLive,60000);
 </script>
 
 </body>
